@@ -23,15 +23,21 @@ const int Y_pin = 1; // analog pin connected to Y output
 LedControl lc = LedControl(12, 10, 11, 1);
 //shipGun Max 64 Min 2
 int shipGun = 64;
-int firingLine = shipGun;
 //shipBody Max 224 Min 4
 int shipBody = 128;
-int delayMoveShip = 80;
-unsigned long delayShoot = 50;
+//change ship speed
+unsigned long delayMoveShip = 60;
+int delayMoveShipAdd = delayMoveShip;
+//change shoot speed
+unsigned long delayShoot = 20;
 unsigned long delayClear = delayShoot * 2;
 int delayShootAdd = delayShoot * 2;
 unsigned long currentTime = 0;
 int bullet = 5;
+int firingLine = shipGun;
+//army line
+int armyBackline = 126;
+int armyFrontline = 126;
 
 void setup()
 {
@@ -56,6 +62,7 @@ void loop()
     Y_direction = 0;
     currentTime = millis();
     readDirection(&X_direction, &Y_direction, SW_pin, X_pin, Y_pin);
-    moveShip(lc, &shipGun, &shipBody, X_direction, delayMoveShip);
+    moveShip(lc, &shipGun, &shipBody, X_direction, currentTime, &delayMoveShip, delayMoveShipAdd);
     shoot(lc, shipGun, &firingLine ,&bullet, currentTime, &delayShoot, &delayClear, delayShootAdd);
+    printArmy(lc, &armyBackline, &armyFrontline, &firingLine, &bullet);
 }

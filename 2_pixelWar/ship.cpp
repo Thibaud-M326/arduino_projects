@@ -13,28 +13,29 @@ void printShip(LedControl lc, int shipGun, int shipBody)
 }
 
 
-void moveShip(LedControl lc, int *shipGun, int *shipBody, int XshipDirection, int delayMoveShip)
+void moveShip(LedControl lc, int *shipGun, int *shipBody, int XshipDirection, unsigned long currentTime, unsigned long *delayMoveShip, int delayMoveShipAdd)
 {
-    if(XshipDirection == -1 && *shipBody < 128)
+    if(currentTime > *delayMoveShip)
     {
-        *shipGun = *shipGun << 1;
-        *shipBody = *shipBody << 1;
+        if(XshipDirection == -1 && *shipBody < 128)
+        {
+            *shipGun = *shipGun << 1;
+            *shipBody = *shipBody << 1;
+        }
+        if(XshipDirection == 1 && *shipBody > 4)
+        {
+            *shipGun = *shipGun >> 1;
+            *shipBody = *shipBody >> 1;
+        }
+        printShip(lc, *shipGun, *shipBody);
+        *delayMoveShip = currentTime + delayMoveShipAdd;
     }
-    if(XshipDirection == 1 && *shipBody > 4)
-    {
-        *shipGun = *shipGun >> 1;
-        *shipBody = *shipBody >> 1;
-    }
-    printShip(lc, *shipGun, *shipBody);
-    delay(delayMoveShip);
 }
 
 void shoot(LedControl lc, int shipGun, int *firingLine, int *bullet, unsigned long currentTime, unsigned long *delayShoot, unsigned long *delayClear, int delayShootAdd)
 {
     if(currentTime > *delayShoot && *bullet >= 0)
     {
-        Serial.print(*bullet);
-        Serial.print("\n");
         if(*bullet == 5)
         {
             *firingLine = shipGun;
@@ -52,4 +53,19 @@ void shoot(LedControl lc, int shipGun, int *firingLine, int *bullet, unsigned lo
     {
         *bullet = 5;
     }
+}
+
+void printArmy(LedControl lc, int *armyBackline, int *armyFrontline, int *firingLine, int *bullet)
+{
+    int backline;
+    int frontline;
+
+    backline = 0;
+    frontline = 1;
+    if(*bullet == 1)
+    {
+        *armyFrontline -= *firingLine;
+        *bullet = 5;
+    }
+    lc.setRow(0, frontline, *armyFrontline);
 }
