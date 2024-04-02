@@ -38,6 +38,7 @@ void shoot(LedControl lc, int shipGun, int *firingLine, int *bullet, unsigned lo
     {
         if(*bullet == 5)
         {
+            Serial.print("SHOOT!!!");
             *firingLine = shipGun;
         }
         lc.setRow(0, *bullet, *firingLine);
@@ -55,17 +56,45 @@ void shoot(LedControl lc, int shipGun, int *firingLine, int *bullet, unsigned lo
     }
 }
 
-void printArmy(LedControl lc, int *armyBackline, int *armyFrontline, int *firingLine, int *bullet)
+void printArmy(LedControl lc, int *armyBackline, int *armyFrontline)
 {
-    int backline;
-    int frontline;
-
-    backline = 0;
-    frontline = 1;
-    if(*bullet == 1)
+    int armyLineSize = 7;
+    int backline = 0;
+    int frontline = 1;
+    int armyBacklineSoldiers = 0;
+    int armyFrontlineSoldiers = 0;
+    while(armyLineSize >= 0)
     {
-        *armyFrontline -= *firingLine;
-        *bullet = 5;
+        armyBacklineSoldiers += armyBackline[armyLineSize];
+        armyFrontlineSoldiers += armyFrontline[armyLineSize];
+        armyLineSize--;
     }
-    lc.setRow(0, frontline, *armyFrontline);
+    if(armyBacklineSoldiers != 0)
+    {
+        lc.setRow(0, backline, armyBacklineSoldiers);
+    }
+    if(armyFrontlineSoldiers != 0)
+    {
+        lc.setRow(0, frontline, armyFrontlineSoldiers);
+    }
+}
+
+void killSoldier(LedControl lc, int *armyBackline, int *armyFrontline, int firingLine, int *bullet)
+{
+    int armyLineSize = 7;
+    int backline = 0;
+    int frontline = 1;
+    while(armyLineSize >= 0)
+    {
+        if(armyFrontline[armyLineSize] == firingLine && *bullet == 1)
+        {
+            armyFrontline[armyLineSize] = 0; 
+            *bullet = 5;
+        }
+        else if(armyBackline[armyLineSize] == firingLine && *bullet == 0)
+        {
+            armyBackline[armyLineSize] = 0;
+        }
+        armyLineSize--;
+    }
 }

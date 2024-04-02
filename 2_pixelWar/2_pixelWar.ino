@@ -36,8 +36,8 @@ unsigned long currentTime = 0;
 int bullet = 5;
 int firingLine = shipGun;
 //army line
-int armyBackline = 126;
-int armyFrontline = 126;
+int armyBackline[] = {0, 64, 32, 16, 8, 4, 2, 0};
+int armyFrontline[] = {0, 64, 32, 16, 8, 4, 2, 0};
 
 void setup()
 {
@@ -64,5 +64,6 @@ void loop()
     readDirection(&X_direction, &Y_direction, SW_pin, X_pin, Y_pin);
     moveShip(lc, &shipGun, &shipBody, X_direction, currentTime, &delayMoveShip, delayMoveShipAdd);
     shoot(lc, shipGun, &firingLine ,&bullet, currentTime, &delayShoot, &delayClear, delayShootAdd);
-    printArmy(lc, &armyBackline, &armyFrontline, &firingLine, &bullet);
+    printArmy(lc, armyBackline, armyFrontline);
+    killSoldier(lc, armyBackline, armyFrontline, firingLine, &bullet);
 }
